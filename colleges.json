@@ -58,7 +58,8 @@
     "college": "Alamo Colleges District",
     "website": "https://www.alamo.edu",
     "coords": [29.4460, -98.4970],
-    "faculty": ["name":"Joseph Liedecke","email":"jliedecke@alamo.edu","profile":""}
+    "faculty": [
+      {"name":"Joseph Liedecke","email":"jliedecke@alamo.edu","profile":""}
     ]
   },
   {
@@ -449,6 +450,7 @@
   ]
 }
 ]
+
 
 
 
