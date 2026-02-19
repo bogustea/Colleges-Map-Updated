@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Texas Colleges Map</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .popup-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="map"></div>
+
+  <!-- Leaflet JavaScript -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // Create the map centered on Texas
+    const map = L.map('map').setView([31.0, -99.0], 6);
+
+    // Tile layer from OpenStreetMap
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Load your colleges.json file (must be in same folder)
+    fetch('colleges.json')
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(college => {
+          const [lat, lng] = college.coords;
+
+          // Only place marker if coords are not 0,0
+          if (lat !== 0 && lng !== 0) {
+            const marker = L.marker([lat, lng]).addTo(map);
+
+            let popupHtml = `
+              <div class="popup-title">${college.college}</div>
+              <a href="${college.website}" target="_blank">${college.website}</a><br><br>
+            `;
+
+            college.faculty.forEach(person => {
+              popupHtml += `
+                <div>${person.name}</div>
+                <div><a href="mailto:${person.email}">${person.email}</a></div>
+              `;
+              if (person.profile) {
+                popupHtml += `<div><a href="${person.profile}" target="_blank">Profile</a></div>`;
+              }
+              popupHtml += `<hr>`;
+            });
+
+            marker.bindPopup(popupHtml);
+          }
+        });
+      })
+      .catch(error => console.error('Error loading JSON:', error));
+  </script>
+
+</body>
+</html>
+
